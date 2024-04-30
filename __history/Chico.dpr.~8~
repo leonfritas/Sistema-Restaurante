@@ -1,0 +1,18 @@
+program Chico;
+
+uses
+  Vcl.Forms,
+  untCadastroProduto in 'untCadastroProduto.pas' {frmCadastroProduto},
+  DMChicoConexao in 'DMChicoConexao.pas' {DataModule1: TDataModule},
+  untHome in 'untHome.pas' {frmHome},
+  untHomeCadastro in 'untHomeCadastro.pas' {frmHomeCadastro};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDataModule1, DataModule1);
+  Application.CreateForm(TfrmHome, frmHome);
+  Application.Run;
+end.

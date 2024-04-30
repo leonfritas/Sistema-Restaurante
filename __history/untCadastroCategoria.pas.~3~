@@ -1,0 +1,44 @@
+unit untCadastroCategoria;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.DBCtrls,
+  Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Data.Win.ADODB;
+
+type
+  TfrmCadastroCategoria = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DBGrid1: TDBGrid;
+    Panel3: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    Label3: TLabel;
+    editNomeProduto: TDBEdit;
+    editQuantProduto: TDBEdit;
+    LCBCategoria: TDBLookupComboBox;
+    btnSalvar: TButton;
+    btnCancelar: TButton;
+    btnInserir: TButton;
+    btnExcluir: TButton;
+    btnEditar: TButton;
+    srcCategoria: TDataSource;
+    ADOCategorias: TADOStoredProc;
+    ADOCategoriasidCategoria: TAutoIncField;
+    ADOCategoriasnomeCategoria: TStringField;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCadastroCategoria: TfrmCadastroCategoria;
+
+implementation
+
+{$R *.dfm}
+
+end.

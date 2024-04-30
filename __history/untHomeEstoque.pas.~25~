@@ -1,0 +1,231 @@
+unit untHomeEstoque;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.ComCtrls, Vcl.StdCtrls,
+  Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, Data.Win.ADODB;
+
+type
+  TfrmHomeEstoque = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    gridEstoqueAtual: TDBGrid;
+    Panel3: TPanel;
+    Label1: TLabel;
+    btnSalvar: TButton;
+    btnCancelar: TButton;
+    btnInserir: TButton;
+    btnExcluir: TButton;
+    PageControl1: TPageControl;
+    TabSheet1: TTabSheet;
+    Panel4: TPanel;
+    editDataEntrada: TDBEdit;
+    Label2: TLabel;
+    ADOEstoqueAtual: TADOStoredProc;
+    srcEstoqueAtual: TDataSource;
+    ADOProduto: TADOStoredProc;
+    ADOProdutoidProduto: TAutoIncField;
+    ADOProdutonomeProduto: TStringField;
+    ADOProdutoidCategoria: TIntegerField;
+    ADOProdutoQuantidade: TIntegerField;
+    ADOProdutonomeCategoria: TStringField;
+    srcProduto: TDataSource;
+    LCBProduto: TDBLookupComboBox;
+    DBEdit2: TDBEdit;
+    Label4: TLabel;
+    DBEditPreco: TDBEdit;
+    dbEditQuantidade: TDBEdit;
+    Label3: TLabel;
+    Label5: TLabel;
+    chkValorCadastrado: TCheckBox;
+    Label6: TLabel;
+    ADOProdutopreco: TBCDField;
+    editQuantidade: TEdit;
+    editPreco: TEdit;
+    ADOEstoqueAtualidEstoque: TAutoIncField;
+    ADOEstoqueAtualidProduto: TIntegerField;
+    ADOEstoqueAtualdataEntrada: TDateField;
+    ADOEstoqueAtualdataSaida: TDateField;
+    ADOEstoqueAtualquantidade: TIntegerField;
+    ADOEstoqueAtualpreco: TBCDField;
+    ADOEstoqueAtualnomeProduto: TStringField;
+    ADOEstoqueAtualnomeCategoria: TStringField;
+    Panel5: TPanel;
+    Label7: TLabel;
+    lblTotalPreco: TLabel;
+    procedure btnInserirClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
+    procedure srcEstoqueAtualDataChange(Sender: TObject; Field: TField);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure chkValorCadastradoClick(Sender: TObject);
+    procedure FormClose(Sender: TObject; var Action: TCloseAction);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure calcularTotal;
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmHomeEstoque: TfrmHomeEstoque;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmHomeEstoque.calcularTotal;
+var
+  totalPreco: Currency;
+begin
+  ADOEstoqueAtual.First;
+  //
+  while not ADOEstoqueAtual.Eof do
+  begin
+    totalPreco := totalPreco + ADOEstoqueAtual.FieldByName('preco').AsCurrency;
+
+    ADOEstoqueAtual.Next;
+  end;
+  lblTotalPreco.Caption := CurrToStr(totalPreco);
+end;
+
+procedure TfrmHomeEstoque.btnCancelarClick(Sender: TObject);
+begin
+  ADOEstoqueAtual.Cancel;
+end;
+
+procedure TfrmHomeEstoque.btnExcluirClick(Sender: TObject);
+begin
+  case MessageDlg('Deseja excluir registro do estoque?', mtConfirmation, [mbOK, mbCancel], 0) of
+  mrOk:
+    begin
+      try
+        ADOEstoqueAtual.Delete;
+        //
+        ShowMessage('Registro excluído com sucesso');
+      except
+        on E: Exception do
+        begin
+          ShowMessage('Erro: ' + E.Message );
+          Close;
+        end;
+      end;
+    end;
+  mrCancel:
+    begin
+
+    end;
+  end;
+  //
+  calcularTotal;
+
+end;
+
+procedure TfrmHomeEstoque.btnInserirClick(Sender: TObject);
+begin
+    chkValorCadastrado.Checked := True;
+    //
+    editDataEntrada.Text := DateToStr(Date());
+    //
+    ADOEstoqueAtual.Insert;
+    //
+    ADOProduto.Close;
+    ADOProduto.Parameters.ParamByName('@nomeProduto').Value := null ;
+    ADOProduto.Open;
+    //
+    LCBProduto.KeyValue := ADOProduto.FieldByName('idProduto').asInteger;
+    //
+    calcularTotal;
+end;
+
+procedure TfrmHomeEstoque.btnSalvarClick(Sender: TObject);
+begin
+
+  try
+    if chkValorCadastrado.Checked then
+    begin
+      ADOEstoqueAtual.FieldByName('preco').AsInteger := ADOProduto.FieldByName('preco').AsInteger;
+      ADOEstoqueAtual.FieldByName('quantidade').AsInteger := ADOProduto.FieldByName('quantidade').AsInteger;
+    end
+    else
+    begin
+      ADOEstoqueAtual.FieldByName('preco').Value := editPreco.Text;
+      ADOEstoqueAtual.FieldByName('quantidade').Value := editQuantidade.Text;
+    end;
+    //
+    ADOEstoqueAtual.FieldByName('dataEntrada').Value := editDataEntrada.Text;
+    ADOEstoqueAtual.FieldByName('idProduto').AsInteger := ADOProduto.FieldByName('idProduto').AsInteger;
+    //
+    ADOEstoqueAtual.Post;
+    ADOEstoqueAtual.Close;
+    ADOEstoqueAtual.Open;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro: ' + E.Message );
+     Close;
+    end;
+  end;
+  //
+  calcularTotal;
+
+end;
+
+procedure TfrmHomeEstoque.chkValorCadastradoClick(Sender: TObject);
+begin
+  if chkValorCadastrado.checked then
+  begin
+    dbEditQuantidade.Visible := True;
+    dbEditPreco.Visible := True;
+    //
+    editQuantidade.Visible := False;
+    editPreco.Visible := False;
+  end
+  else
+  begin
+    dbEditQuantidade.Visible := False;
+    dbEditPreco.Visible := False;
+    //
+    editQuantidade.Visible := True;
+    editPreco.Visible := True;
+  end;
+end;
+
+procedure TfrmHomeEstoque.FormClose(Sender: TObject; var Action: TCloseAction);
+begin
+   ADOEstoqueAtual.Close;
+   ADOEstoqueAtual.Parameters.ParamByName('@verificarEstoqueAtual').CleanupInstance;
+   //
+   ADOProduto.Close;
+   ADOProduto.Parameters.ParamByName('@nomeProduto').CleanupInstance;
+end;
+
+procedure TfrmHomeEstoque.FormShow(Sender: TObject);
+begin
+   ADOEstoqueAtual.Close;
+   ADOEstoqueAtual.Parameters.ParamByName('@verificarEstoqueAtual').Value := true;
+   ADOEstoqueAtual.Open;
+   //
+   chkValorCadastrado.Checked := True
+   //
+   calcularTotal;
+end;
+
+procedure TfrmHomeEstoque.srcEstoqueAtualDataChange(Sender: TObject;
+  Field: TField);
+begin
+  gridEstoqueAtual.Enabled := ADOEstoqueAtual.State = dsBrowse;
+  //
+  chkValorCadastrado.Visible := ADOEstoqueAtual.State = dsInsert;
+  //
+  btnSalvar.Visible   := (srcEstoqueAtual.State = dsEdit) or (srcEstoqueAtual.State = dsInsert);
+  btnCancelar.Visible := (srcEstoqueAtual.State = dsEdit) or (srcEstoqueAtual.State = dsInsert);
+  //
+  btnInserir.Visible := not btnSalvar.Visible;
+  btnExcluir.Visible := not btnSalvar.Visible;
+end;
+
+end.

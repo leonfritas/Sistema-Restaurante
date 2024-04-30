@@ -1,0 +1,114 @@
+unit untCadastroProduto;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.DBCtrls,
+  Vcl.Mask, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBGrids, FireDAC.Stan.Intf,
+  FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error, FireDAC.DatS,
+  FireDAC.Phys.Intf, FireDAC.DApt.Intf, FireDAC.Stan.Async, FireDAC.DApt,
+  FireDAC.Comp.DataSet, FireDAC.Comp.Client, Data.Win.ADODB;
+
+type
+  TfrmCadastroProduto = class(TForm)
+    Panel1: TPanel;
+    Panel2: TPanel;
+    DBGrid1: TDBGrid;
+    Panel3: TPanel;
+    editNomeProduto: TDBEdit;
+    Label1: TLabel;
+    editQuantProduto: TDBEdit;
+    Label2: TLabel;
+    LCBCategoria: TDBLookupComboBox;
+    Label3: TLabel;
+    btnSalvar: TButton;
+    btnCancelar: TButton;
+    btnInserir: TButton;
+    btnExcluir: TButton;
+    btnEditar: TButton;
+    ADOProdutos: TADOStoredProc;
+    ADOProdutosidProduto: TAutoIncField;
+    ADOProdutosnomeProduto: TStringField;
+    ADOProdutosidCategoria: TIntegerField;
+    ADOCategorias: TADOStoredProc;
+    srcProdutos: TDataSource;
+    srcCategoria: TDataSource;
+    ADOCategoriasidCategoria: TAutoIncField;
+    ADOCategoriasnomeCategoria: TStringField;
+    ADOProdutosQuantidade: TIntegerField;
+    ADOProdutosnomeCategoria: TStringField;
+    procedure FormShow(Sender: TObject);
+    procedure btnInserirClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+    procedure srcProdutosDataChange(Sender: TObject; Field: TField);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCadastroProduto: TfrmCadastroProduto;
+
+implementation
+
+{$R *.dfm}
+
+uses DMChicoConexao;
+
+procedure TfrmCadastroProduto.btnCancelarClick(Sender: TObject);
+begin
+  ADOProdutos.Cancel;        
+end;
+
+procedure TfrmCadastroProduto.btnEditarClick(Sender: TObject);
+begin
+  ADOProdutos.Edit;
+end;
+
+procedure TfrmCadastroProduto.btnExcluirClick(Sender: TObject);
+begin
+  ADOProdutos.Delete;
+end;
+
+procedure TfrmCadastroProduto.btnInserirClick(Sender: TObject);
+begin
+  ADOProdutos.Insert;
+end;
+
+procedure TfrmCadastroProduto.btnSalvarClick(Sender: TObject);
+begin
+  ADOProdutos.Post;
+  //
+  ADOProdutos.Close;
+  ADOProdutos.Open;
+end;
+
+procedure TfrmCadastroProduto.FormShow(Sender: TObject);
+begin
+//  ADOCategorias.Close;
+//  ADOCategorias.Parameters.ParamByName('@nomeCategoria').value := null;
+//  ADOCategorias.Open;
+//  //
+//  ADOProdutos.Close;
+//  ADOProdutos.Parameters.ParamByName('@nomeProduto').Value := null ;
+//  ADOProdutos.Open;
+
+end;
+
+procedure TfrmCadastroProduto.srcProdutosDataChange(Sender: TObject;
+  Field: TField);
+begin
+  btnSalvar.Visible := (srcProdutos.State = dsEdit) or (srcProdutos.State = dsInsert);
+  btnCancelar.Visible := (srcProdutos.State = dsEdit) or (srcProdutos.State = dsInsert);
+  //
+  btnInserir.Visible := not btnSalvar.Visible;
+  btnEditar.Visible := not btnSalvar.Visible;
+  btnExcluir.Visible := not btnSalvar.Visible; 
+end;
+
+end.
