@@ -1,0 +1,112 @@
+unit untHomeFinanceiro;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
+  Vcl.ExtCtrls, Data.Win.ADODB, Vcl.ComCtrls, Vcl.StdCtrls,
+  Vcl.DBCtrls, Vcl.Mask, System.UITypes;
+
+type
+  TfrmHomeFinanceiro = class(TForm)
+    gridGrupoPedido: TDBGrid;
+    ADOFinanceiroMovimentoPendente: TADOStoredProc;
+    ADOFinanceiroMovimentoPendenteidFinanceiroGrupoPedido: TAutoIncField;
+    ADOFinanceiroMovimentoPendenteidGrupoPedido: TIntegerField;
+    ADOFinanceiroMovimentoPendentedataMovimento: TDateTimeField;
+    ADOFinanceiroMovimentoPendentedataPagamento: TDateTimeField;
+    ADOFinanceiroMovimentoPendenteativoBaixa: TBooleanField;
+    srcFinanceiroMovimentoPendente: TDataSource;
+    Button1: TButton;
+    Label1: TLabel;
+    Label2: TLabel;
+    DBGrid1: TDBGrid;
+    ADOFinanceiroMovimentoRealizado: TADOStoredProc;
+    AutoIncField1: TAutoIncField;
+    IntegerField1: TIntegerField;
+    DateTimeField1: TDateTimeField;
+    DateTimeField2: TDateTimeField;
+    BooleanField1: TBooleanField;
+    srcFinanceiroMovimentoRealizado: TDataSource;
+    ADOFinanceiroMovimentoRealizadonomeGrupoPedido: TStringField;
+    ADOFinanceiroMovimentoPendentenomeGrupoPedido: TStringField;
+    Button2: TButton;
+    editTotalPedido: TEdit;
+    Label3: TLabel;
+    editValorPedido: TEdit;
+    Label4: TLabel;
+    ADOFinanceiroMovimentoRealizadovalorMovimento: TBCDField;
+    ADOFinanceiroMovimentoRealizadovalorPedido: TBCDField;
+    procedure Button1Click(Sender: TObject);
+    procedure Button2Click(Sender: TObject);
+    procedure calcularTotalDoDia;
+    procedure FormShow(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+    totalRecebido: Currency;
+  end;
+
+var
+  frmHomeFinanceiro: TfrmHomeFinanceiro;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmHomeFinanceiro.calcularTotalDoDia;
+begin
+//  ADOFinanceiroMovimentoRealizado.First;
+//  totalRecebido := 0;
+//  while not ADOFinanceiroMovimentoRealizado.Eof do
+//  begin
+////     totalRecebido := totalRecebido + ADOFinanceiroMovimentoRealizado.FieldByName('valorMovimento').Value;
+////     ADOFinanceiroMovimentoRealizado.Next;
+//  end;
+//  showmessage(CurrToStr(totalRecebido));
+end;
+
+
+procedure TfrmHomeFinanceiro.FormShow(Sender: TObject);
+begin
+     calcularTotalDoDia;
+     editValorPedido.Text :=  CurrToStr(totalRecebido);
+end;
+
+procedure TfrmHomeFinanceiro.Button1Click(Sender: TObject);
+begin
+  if ADOFinanceiroMovimentoPendente.RecordCount > 0  then
+  begin
+    ADOFinanceiroMovimentoPendente.Edit;
+    ADOFinanceiroMovimentoPendente.FieldByName('ativoBaixa').Value := true;
+    ADOFinanceiroMovimentoPendente.FieldByName('dataPagamento').Value :=  FormatDateTime('dd/mm/yyyy', Date());
+    ADOFinanceiroMovimentoPendente.Post;
+    //
+    ADOFinanceiroMovimentoPendente.Close;
+    ADOFinanceiroMovimentoPendente.Open;
+    //
+    ADOFinanceiroMovimentoRealizado.Close;
+    ADOFinanceiroMovimentoRealizado.Open;
+  end;
+end;
+
+procedure TfrmHomeFinanceiro.Button2Click(Sender: TObject);
+begin
+  if ADOFinanceiroMovimentoRealizado.RecordCount > 0  then
+  begin
+    ADOFinanceiroMovimentoRealizado.Edit;
+    ADOFinanceiroMovimentoRealizado.FieldByName('ativoBaixa').Value := null;
+    ADOFinanceiroMovimentoRealizado.FieldByName('dataPagamento').Value :=  null;
+    ADOFinanceiroMovimentoRealizado.Post;
+    //
+    ADOFinanceiroMovimentoPendente.Close;
+    ADOFinanceiroMovimentoPendente.Open;
+    //
+    ADOFinanceiroMovimentoRealizado.Close;
+    ADOFinanceiroMovimentoRealizado.Open;
+  end;
+end;
+
+end.

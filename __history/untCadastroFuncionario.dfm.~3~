@@ -1,0 +1,234 @@
+object frmCadastroFuncionario: TfrmCadastroFuncionario
+  Left = 0
+  Top = 0
+  Caption = 'frmCadastroFuncionario'
+  ClientHeight = 442
+  ClientWidth = 628
+  Color = clBtnFace
+  Font.Charset = DEFAULT_CHARSET
+  Font.Color = clWindowText
+  Font.Height = -12
+  Font.Name = 'Segoe UI'
+  Font.Style = []
+  Position = poScreenCenter
+  TextHeight = 15
+  object DBGrid1: TDBGrid
+    Left = 0
+    Top = 40
+    Width = 628
+    Height = 273
+    Align = alClient
+    DataSource = srcFuncionario
+    TabOrder = 0
+    TitleFont.Charset = DEFAULT_CHARSET
+    TitleFont.Color = clWindowText
+    TitleFont.Height = -12
+    TitleFont.Name = 'Segoe UI'
+    TitleFont.Style = []
+    Columns = <
+      item
+        Expanded = False
+        FieldName = 'idFuncionario'
+        Title.Caption = 'Id'
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'nomeFuncionario'
+        Title.Caption = 'Funcion'#225'rio'
+        Width = 240
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'nomeUsuario'
+        Title.Caption = 'Usu'#225'rio'
+        Width = 133
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'nomeSenha'
+        Title.Caption = 'Senha'
+        Width = 101
+        Visible = True
+      end
+      item
+        Expanded = False
+        FieldName = 'ativoAdministrador'
+        Title.Caption = 'Administrador'
+        Width = 89
+        Visible = True
+      end>
+  end
+  object Panel3: TPanel
+    Left = 0
+    Top = 313
+    Width = 628
+    Height = 129
+    Align = alBottom
+    TabOrder = 1
+    ExplicitTop = 281
+    object Label1: TLabel
+      Left = 8
+      Top = 6
+      Width = 33
+      Height = 15
+      Caption = 'Nome'
+    end
+    object Label2: TLabel
+      Left = 251
+      Top = 6
+      Width = 40
+      Height = 15
+      Caption = 'Usu'#225'rio'
+    end
+    object Label3: TLabel
+      Left = 383
+      Top = 6
+      Width = 32
+      Height = 15
+      Caption = 'Senha'
+    end
+    object editNomeCategoria: TDBEdit
+      Left = 8
+      Top = 24
+      Width = 237
+      Height = 23
+      DataField = 'nomeFuncionario'
+      DataSource = srcFuncionario
+      TabOrder = 0
+    end
+    object btnSalvar: TButton
+      Left = 461
+      Top = 68
+      Width = 75
+      Height = 49
+      Caption = 'Salvar'
+      TabOrder = 1
+      OnClick = btnSalvarClick
+    end
+    object btnCancelar: TButton
+      Left = 542
+      Top = 68
+      Width = 75
+      Height = 49
+      Caption = 'Cancelar'
+      TabOrder = 2
+      OnClick = btnCancelarClick
+    end
+    object btnInserir: TButton
+      Left = 8
+      Top = 68
+      Width = 75
+      Height = 49
+      Caption = 'Inserir'
+      TabOrder = 3
+      OnClick = btnInserirClick
+    end
+    object btnExcluir: TButton
+      Left = 89
+      Top = 68
+      Width = 75
+      Height = 49
+      Caption = 'Excluir'
+      TabOrder = 4
+      OnClick = btnExcluirClick
+    end
+    object btnEditar: TButton
+      Left = 170
+      Top = 68
+      Width = 75
+      Height = 49
+      Caption = 'Editar'
+      TabOrder = 5
+      OnClick = btnEditarClick
+    end
+    object DBEdit1: TDBEdit
+      Left = 251
+      Top = 24
+      Width = 126
+      Height = 23
+      DataField = 'nomeUsuario'
+      DataSource = srcFuncionario
+      TabOrder = 6
+    end
+    object DBEdit2: TDBEdit
+      Left = 383
+      Top = 24
+      Width = 126
+      Height = 23
+      DataField = 'nomeSenha'
+      DataSource = srcFuncionario
+      TabOrder = 7
+    end
+    object DBCheckBox1: TDBCheckBox
+      Left = 515
+      Top = 27
+      Width = 97
+      Height = 17
+      Caption = 'Adm'
+      DataField = 'ativoAdministrador'
+      DataSource = srcFuncionario
+      TabOrder = 8
+    end
+  end
+  object Panel2: TPanel
+    Left = 0
+    Top = 0
+    Width = 628
+    Height = 40
+    Align = alTop
+    TabOrder = 2
+    ExplicitLeft = 1
+    ExplicitTop = 1
+    ExplicitWidth = 620
+  end
+  object srcFuncionario: TDataSource
+    DataSet = ADOFuncionario
+    OnDataChange = srcFuncionarioDataChange
+    Left = 40
+    Top = 224
+  end
+  object ADOFuncionario: TADOStoredProc
+    Connection = DataModule1.ADOConexao
+    CursorType = ctStatic
+    ProcedureName = 'sp_Funcionario;1'
+    Parameters = <
+      item
+        Name = '@RETURN_VALUE'
+        DataType = ftInteger
+        Direction = pdReturnValue
+        Precision = 10
+        Value = 0
+      end
+      item
+        Name = '@nomeFuncionario'
+        Attributes = [paNullable]
+        DataType = ftString
+        Size = 100
+        Value = '0'
+      end>
+    Left = 8
+    Top = 224
+    object ADOFuncionarioidFuncionario: TAutoIncField
+      FieldName = 'idFuncionario'
+      ReadOnly = True
+    end
+    object ADOFuncionarionomeFuncionario: TStringField
+      FieldName = 'nomeFuncionario'
+      Size = 100
+    end
+    object ADOFuncionarionomeUsuario: TStringField
+      FieldName = 'nomeUsuario'
+      Size = 50
+    end
+    object ADOFuncionarionomeSenha: TStringField
+      FieldName = 'nomeSenha'
+      Size = 6
+    end
+    object ADOFuncionarioativoAdministrador: TBooleanField
+      FieldName = 'ativoAdministrador'
+    end
+  end
+end

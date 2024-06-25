@@ -1,0 +1,52 @@
+unit untHomeHistorico;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls,
+  Data.DB, Vcl.Grids, Vcl.DBGrids, Data.Win.ADODB;
+
+type
+  TfrmHomeHistorico = class(TForm)
+    Panel1: TPanel;
+    DateTimePicker1: TDateTimePicker;
+    Button1: TButton;
+    ADOGrupoPedido: TADOStoredProc;
+    ADOGrupoPedidoidGrupoPedido: TAutoIncField;
+    ADOGrupoPedidonomeGrupoPedido: TStringField;
+    ADOGrupoPedidodataEntrada: TDateTimeField;
+    ADOGrupoPedidodataSaida: TDateTimeField;
+    ADOGrupoPedidovalorPedido: TBCDField;
+    srcGrupoPedido: TDataSource;
+    DBGrid1: TDBGrid;
+    ADOGrupoPedidoativoBaixa: TBooleanField;
+    procedure FormCreate(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmHomeHistorico: TfrmHomeHistorico;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmHomeHistorico.FormCreate(Sender: TObject);
+begin
+  ADOGrupoPedido.Filtered := False;
+  ADOGrupoPedido.Filter := 'dataSaida IS NOT NULL';
+  ADOGrupoPedido.Filtered := True;
+end;
+
+procedure TfrmHomeHistorico.FormDestroy(Sender: TObject);
+begin
+  ADOGrupoPedido.Filtered := False;
+  ADOGrupoPedido.Filter := '';
+end;
+
+end.

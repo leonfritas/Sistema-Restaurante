@@ -1,61 +1,57 @@
 unit untHomeGrupoPedido;
-
 interface
-
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.Grids, Vcl.DBGrids,
-  Vcl.StdCtrls, Data.Win.ADODB, Vcl.ExtCtrls;
-
+  Vcl.StdCtrls, Data.Win.ADODB, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Imaging.pngimage;
 type
   TfrmHomeGrupoPedido = class(TForm)
-    gridGrupoPedido: TDBGrid;
-    btnNovoPedido: TButton;
     ADOGrupoPedido: TADOStoredProc;
     srcGrupoPedido: TDataSource;
-    Button1: TButton;
     ADOGrupoPedidoidGrupoPedido: TAutoIncField;
     ADOGrupoPedidonomeGrupoPedido: TStringField;
     ADOGrupoPedidodataEntrada: TDateTimeField;
     ADOGrupoPedidodataSaida: TDateTimeField;
-    btnAtualizarGrupoPedido: TButton;
-    btnEditarPedido: TButton;
-    DBGrid1: TDBGrid;
     ADOGrupoPedidovalorPedido: TBCDField;
-    ADOGrupoPedidobaixaPedido: TBooleanField;
     ADOGrupoPedidoRealizado: TADOStoredProc;
     AutoIncField1: TAutoIncField;
     StringField1: TStringField;
     DateTimeField1: TDateTimeField;
     DateTimeField2: TDateTimeField;
     BCDField1: TBCDField;
-    BooleanField1: TBooleanField;
     srcGrupoPedidoRealizado: TDataSource;
     Timer1: TTimer;
-    btnCancelar: TButton;
-    procedure btnNovoPedidoClick(Sender: TObject);
-    procedure btnAtualizarGrupoPedidoClick(Sender: TObject);
-    procedure btnEditarPedidoClick(Sender: TObject);
-    procedure Button1Click(Sender: TObject);
+    Panel1: TPanel;
+    Label2: TLabel;
+    DBGrid1: TDBGrid;
+    Panel2: TPanel;
+    gridGrupoPedido: TDBGrid;
+    Panel3: TPanel;
+    SBNovoPedido: TSpeedButton;
+    SBEditarPedido: TSpeedButton;
+    SBCancelarPedido: TSpeedButton;
+    SBAtualizar: TSpeedButton;
+    SBFinalizarPedido: TSpeedButton;
+    Label1: TLabel;
+    Image1: TImage;
     procedure Timer1Timer(Sender: TObject);
-    procedure btnCancelarClick(Sender: TObject);
+    procedure srcGrupoPedidoDataChange(Sender: TObject; Field: TField);
+    procedure SBNovoPedidoClick(Sender: TObject);
+    procedure SBEditarPedidoClick(Sender: TObject);
+    procedure SBCancelarPedidoClick(Sender: TObject);
+    procedure SBAtualizarClick(Sender: TObject);
+    procedure SBFinalizarPedidoClick(Sender: TObject);
   private
     { Private declarations }
   public
     { Public declarations }
-
   end;
-
 var
   frmHomeGrupoPedido: TfrmHomeGrupoPedido;
-
 implementation
-
 {$R *.dfm}
-
 uses untHomePedido;
-
-procedure TfrmHomeGrupoPedido.btnAtualizarGrupoPedidoClick(Sender: TObject);
+procedure TfrmHomeGrupoPedido.SBAtualizarClick(Sender: TObject);
 begin
   ADOGrupoPedido.Close;
   ADOGrupoPedido.Parameters.ParamByName('@dataEntrada').value := FormatDateTime('dd/mm/yyyy', Date());
@@ -66,12 +62,12 @@ begin
   ADOGrupoPedidoRealizado.Open;
 end;
 
-procedure TfrmHomeGrupoPedido.btnCancelarClick(Sender: TObject);
+procedure TfrmHomeGrupoPedido.SBCancelarPedidoClick(Sender: TObject);
 begin
   ADOGrupoPedido.Delete;
 end;
 
-procedure TfrmHomeGrupoPedido.btnEditarPedidoClick(Sender: TObject);
+procedure TfrmHomeGrupoPedido.SBEditarPedidoClick(Sender: TObject);
 begin
   if ADOGrupoPedido.RecordCount > 0 then
   begin
@@ -91,7 +87,20 @@ begin
   end;
 end;
 
-procedure TfrmHomeGrupoPedido.btnNovoPedidoClick(Sender: TObject);
+procedure TfrmHomeGrupoPedido.SBFinalizarPedidoClick(Sender: TObject);
+begin
+  if ADOGrupoPedido.RecordCount > 0 then
+  begin
+    ADOGrupoPedido.Edit;
+    ADOGrupoPedido.FieldByName('dataSaida').Value := FormatDateTime('dd/mm/yy hh:nn:ss', Now);
+    ADOGrupoPedido.Post;
+    //
+    SBAtualizarClick(nil);
+  end
+  else showmessage('Não existem pedidos para serem entregues.');
+end;
+
+procedure TfrmHomeGrupoPedido.SBNovoPedidoClick(Sender: TObject);
 begin
   frmHomePedido := TfrmHomePedido.Create(Self);
   //
@@ -103,25 +112,20 @@ begin
   frmHomePedido.ADOGrupoPedido.Insert;
   frmHomePedido.ADOGrupoPedido.FieldByname('dataEntrada').Value := FormatDateTime('dd/mm/yy hh:nn:ss', Now);
   //
+  frmHomePedido.novoPedido := true;
   frmHomePedido.Show;
 end;
 
-procedure TfrmHomeGrupoPedido.Button1Click(Sender: TObject);
+procedure TfrmHomeGrupoPedido.srcGrupoPedidoDataChange(Sender: TObject;
+  Field: TField);
 begin
-
-  ADOGrupoPedido.Edit;
-  ADOGrupoPedido.FieldByName('dataSaida').Value := FormatDateTime('dd/mm/yy hh:nn:ss', Now);
-  ADOGrupoPedido.Post;
-  //
-  btnAtualizarGrupoPedidoClick(nil);
+  SBEditarPedido.Enabled := ADOGrupoPedido.RecordCount > 0;
+  SBCancelarPedido.Enabled := ADOGrupoPedido.RecordCount > 0;
 end;
 
 procedure TfrmHomeGrupoPedido.Timer1Timer(Sender: TObject);
 begin
-  btnAtualizarGrupoPedidoClick(nil);
+  SBAtualizarClick(nil);
 end;
-
 end.
-
-
 

@@ -128,7 +128,23 @@
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="untHomeFinanceiro.pas">
-            <Form>Form1</Form>
+            <Form>frmHomeFinanceiro</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="untHomeHistorico.pas">
+            <Form>frmHomeHistorico</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="untCadastroMesa.pas">
+            <Form>frmCadastroMesa</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="untLogin.pas">
+            <Form>frmLogin</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="untCadastroFuncionario.pas">
+            <Form>frmCadastroFuncionario</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

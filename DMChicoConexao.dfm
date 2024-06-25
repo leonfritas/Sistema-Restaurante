@@ -14,6 +14,7 @@ object DataModule1: TDataModule1
       ';Use FMTONLY=False;Authentication="";Access Token="";Transparent' +
       'NetworkIPResolution=True;Connect Retry Count=1;Connect Retry Int' +
       'erval=10'
+    LoginPrompt = False
     Provider = 'MSOLEDBSQL.1'
     Left = 120
     Top = 70

@@ -30,4 +30,22 @@ object frmHomeCadastro: TfrmHomeCadastro
     TabOrder = 1
     OnClick = Button1Click
   end
+  object Button2: TButton
+    Left = 240
+    Top = 24
+    Width = 97
+    Height = 81
+    Caption = 'Mesa'
+    TabOrder = 2
+    OnClick = Button2Click
+  end
+  object Button3: TButton
+    Left = 352
+    Top = 24
+    Width = 97
+    Height = 81
+    Caption = 'Funcion'#225'rio'
+    TabOrder = 3
+    OnClick = Button3Click
+  end
 end

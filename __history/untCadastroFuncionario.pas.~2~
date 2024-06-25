@@ -1,0 +1,77 @@
+unit untCadastroFuncionario;
+
+interface
+
+uses
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Data.DB, Vcl.StdCtrls, Vcl.Mask,
+  Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Grids, Vcl.DBGrids, Data.Win.ADODB;
+
+type
+  TfrmCadastroFuncionario = class(TForm)
+    DBGrid1: TDBGrid;
+    Panel3: TPanel;
+    Label1: TLabel;
+    editNomeCategoria: TDBEdit;
+    btnSalvar: TButton;
+    btnCancelar: TButton;
+    btnInserir: TButton;
+    btnExcluir: TButton;
+    btnEditar: TButton;
+    Panel2: TPanel;
+    srcFuncionario: TDataSource;
+    ADOFuncionario: TADOStoredProc;
+    ADOFuncionarioidFuncionario: TAutoIncField;
+    ADOFuncionarionomeFuncionario: TStringField;
+    ADOFuncionarionomeUsuario: TStringField;
+    ADOFuncionarionomeSenha: TStringField;
+    ADOFuncionarioativoAdministrador: TBooleanField;
+    DBEdit1: TDBEdit;
+    Label2: TLabel;
+    DBEdit2: TDBEdit;
+    Label3: TLabel;
+    DBCheckBox1: TDBCheckBox;
+    procedure btnInserirClick(Sender: TObject);
+    procedure btnExcluirClick(Sender: TObject);
+    procedure btnEditarClick(Sender: TObject);
+    procedure btnSalvarClick(Sender: TObject);
+    procedure btnCancelarClick(Sender: TObject);
+  private
+    { Private declarations }
+  public
+    { Public declarations }
+  end;
+
+var
+  frmCadastroFuncionario: TfrmCadastroFuncionario;
+
+implementation
+
+{$R *.dfm}
+
+procedure TfrmCadastroFuncionario.btnCancelarClick(Sender: TObject);
+begin
+  ADOFuncionario.Cancel;
+end;
+
+procedure TfrmCadastroFuncionario.btnEditarClick(Sender: TObject);
+begin
+  ADOFuncionario.Edit;
+end;
+
+procedure TfrmCadastroFuncionario.btnExcluirClick(Sender: TObject);
+begin
+  ADOFuncionario.Delete;
+end;
+
+procedure TfrmCadastroFuncionario.btnInserirClick(Sender: TObject);
+begin
+  ADOFuncionario.Insert;
+end;
+
+procedure TfrmCadastroFuncionario.btnSalvarClick(Sender: TObject);
+begin
+ADOFuncionario.Post;
+end;
+
+end.

@@ -65,7 +65,21 @@ type
     editDataPedido: TDBEdit;
     lblDataPedido: TLabel;
     ADOGrupoPedidovalorPedido: TBCDField;
-    ADOGrupoPedidobaixaPedido: TBooleanField;
+    ADOFinanceiroMovimento: TADOStoredProc;
+    srcFinanceiroMovimento: TDataSource;
+    ADOFinanceiroMovimentoidFinanceiroGrupoPedido: TAutoIncField;
+    ADOFinanceiroMovimentoidGrupoPedido: TIntegerField;
+    ADOFinanceiroMovimentodataMovimento: TDateTimeField;
+    ADOFinanceiroMovimentodataPagamento: TDateTimeField;
+    ADOFinanceiroMovimentoativoBaixa: TBooleanField;
+    ADOFinanceiroMovimentovalorMovimento: TBCDField;
+    LCBMesa: TDBLookupComboBox;
+    Label2: TLabel;
+    ADOMesa: TADOStoredProc;
+    srcMesa: TDataSource;
+    ADOGrupoPedidoidMesa: TIntegerField;
+    ADOMesaidMesa: TAutoIncField;
+    ADOMesanomeMesa: TStringField;
     procedure btnInserirClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure srcPedidoDataChange(Sender: TObject; Field: TField);
@@ -83,6 +97,8 @@ type
     { Public declarations }
      totalPreco: Currency;
      nomePedido: String;
+     novoPedido: Boolean;
+     valorPedido: Currency;
   end;
 
 var
@@ -159,11 +175,28 @@ begin
     ADOProduto.Parameters.ParamByName('@nomeProduto').Value := null ;
     ADOProduto.Open;
     //
+    ADOMesa.Close;
+    ADOMesa.Parameters.ParamByName('@nomeMesa').Value := null ;
+    ADOMesa.Open;
+    //
     LCBProduto.KeyValue := ADOProduto.FieldByName('idProduto').asInteger;
+    LCBMesa.KeyValue := ADOMesa.FieldByName('idMesa').asInteger;
 end;
 
 procedure TfrmHomePedido.btnSalvarClick(Sender: TObject);
 begin
+  if editPreco.Visible and (editPreco.Text = '') then
+  begin
+    showmessage('É necessário informar o preço do produto.');
+    Exit;
+  end;
+  //
+  if editQuantidade.Visible and (editQuantidade.Text = '') then
+  begin
+    showmessage('É necessário informar a quantidade do produto.');
+    Exit;
+  end;
+  //
   try
     if chkValorCadastrado.Checked then
     begin
@@ -172,8 +205,8 @@ begin
     end
     else
     begin
-      ADOPedido.FieldByName('preco').Value := editPreco.Text;
-      ADOPedido.FieldByName('quantidade').Value := editQuantidade.Text;
+      ADOPedido.FieldByName('preco').Value := StrToCurr(editPreco.Text);
+      ADOPedido.FieldByName('quantidade').Value := StrToInt(editQuantidade.Text);
     end;
     //
     ADOPedido.FieldByName('idProduto').AsInteger := ADOProduto.FieldByName('idProduto').AsInteger;
@@ -194,33 +227,51 @@ begin
 end;
 
 procedure TfrmHomePedido.btnSalvarPedidoClick(Sender: TObject);
-var
-  valorPedido: Currency;
 begin
-   valorPedido := 0;
-   //
-   ADOPedido.First;
-   //
-   while not ADOPedido.eof do
-   begin
-     valorPedido := valorPedido + ADOPedido.FieldByName('preco').AsCurrency;
-     ADOPedido.Next;
-   end;
-   //
-   ADOGrupoPedido.FieldByName('valorPedido').AsCurrency := valorPedido;
-   ADOGrupoPedido.Post;
-   //
-   ADOPedido.First;
-   //
-   while not ADOPedido.eof do
-   begin
-     ADOPedido.Edit;
-     ADOPedido.FieldByName('idGrupoPedido').AsInteger := ADOGrupoPedido.FieldByName('idGrupoPedido').AsInteger;
-     ADOPedido.Post;
-     ADOPedido.Next;
-   end;
-   //
-   Close;
+  if editNomePedido.Text <> '' then
+  begin
+    valorPedido := 0;
+    //
+    ADOPedido.First;
+    //
+    while not ADOPedido.eof do
+    begin
+      valorPedido := valorPedido + ADOPedido.FieldByName('preco').AsCurrency;
+      ADOPedido.Next;
+    end;
+    //
+    ADOGrupoPedido.FieldByName('idMesa').AsCurrency := LCBMesa.KeyValue;
+    ADOGrupoPedido.FieldByName('valorPedido').AsCurrency := valorPedido;
+    ADOGrupoPedido.Post;
+    //
+    ADOPedido.First;
+    //
+    while not ADOPedido.eof do
+    begin
+      ADOPedido.Edit;
+      ADOPedido.FieldByName('idGrupoPedido').AsInteger := ADOGrupoPedido.FieldByName('idGrupoPedido').AsInteger;
+      ADOPedido.Post;
+      ADOPedido.Next;
+    end;
+    //
+    if novoPedido then
+    begin
+      ADOFinanceiroMovimento.Open;
+      ADOFinanceiroMovimento.Insert;
+      ADOFinanceiroMovimento.FieldByName('idGrupoPedido').AsInteger := ADOGrupoPedido.FieldByName('idGrupoPedido').AsInteger;
+      ADOFinanceiroMovimento.FieldByName('dataMovimento').Value :=   FormatDateTime('dd/mm/yyyy', Date());
+      if valorPedido = null then
+      begin
+        ADOFinanceiroMovimento.FieldByName('valorMovimento').Value := 0;
+      end
+      else ADOFinanceiroMovimento.FieldByName('valorMovimento').Value := valorPedido;
+      //
+      ADOFinanceiroMovimento.Post;
+    end;
+    //
+    Close;
+  end
+  else showmessage('Para salvar o pedido é necessário informar um nome.');
 end;
 
 procedure TfrmHomePedido.chkValorCadastradoClick(Sender: TObject);
@@ -240,6 +291,8 @@ begin
     //
     editQuantidade.Visible  := True;
     editPreco.Visible       := True;
+    editQuantidade.Text := '';
+    editPreco.Text := '';
   end;
 end;
 
@@ -261,6 +314,7 @@ begin
   //
   btnInserir.Visible := not btnSalvar.Visible;
   btnExcluir.Visible := not btnSalvar.Visible;
+  btnSalvarPedido.Enabled := ADOPedido.RecordCount > 0;
 end;
 
 end.
