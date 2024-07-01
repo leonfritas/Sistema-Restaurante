@@ -14,14 +14,16 @@ type
     btnEntrar: TButton;
     Label2: TLabel;
     Label3: TLabel;
-    ADOFuncionarioLogar: TADOStoredProc;
-    srcGrupoPedidoRealizado: TDataSource;
+    srcFuncionarioVerificar: TDataSource;
     editUsuario: TEdit;
     editSenha: TEdit;
-    ADOFuncionarioLogaracessoLiberado: TBooleanField;
-    ADOFuncionarioLogaradministrador: TBooleanField;
     SpeedButton1: TSpeedButton;
     Image1: TImage;
+    ADOQuery1: TADOQuery;
+    ADOFuncionarioVerificar: TADOStoredProc;
+    ADOQuery1nomeFuncionario: TStringField;
+    ADOQuery1ativoFuncionario: TLargeintField;
+    ADOQuery1ativoAdm: TLargeintField;
     procedure btnEntrarClick(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
     procedure editSenhaKeyDown(Sender: TObject; var Key: Word;
@@ -39,27 +41,36 @@ implementation
 
 {$R *.dfm}
 
-uses untHome;
+uses DMChicoConexao, untHome;
 
 procedure TfrmLogin.btnEntrarClick(Sender: TObject);
 begin
-  ADOFuncionarioLogar.Close;
-  ADOFuncionarioLogar.Parameters.ParamByName('@nomeUsuario').Value  := editUsuario.Text;
-  ADOFuncionarioLogar.Parameters.ParamByName('@nomeSenha').Value    := editSenha.Text;
-  ADOFuncionarioLogar.Open;
+
+  ADOQuery1.Close;
+  ADOQuery1.Parameters.ParamByName('nomeUsuario').Value  := editUsuario.Text;
+  ADOQuery1.Parameters.ParamByName('nomeSenha').Value  := editUsuario.Text;
+  ADOQuery1.Open;
+//  ADOQuery1.Close;
+//  ADOQuery1.Parameters.ParamByName('nomeUsuario').Value  := editUsuario.Text;
+//  ADOQuery1.Parameters.ParamByName('nomeSenha').Value    := editSenha.Text;
+//
+//  ADOQuery1.Open;
+
+  showmessage('1');
+
   //
-  if ADOFuncionarioLogar.FieldByName('acessoLiberado').AsBoolean then
-  begin
-  frmHome := TfrmHome.Create(Self);
-  frmHome.ativoAdministrador := ADOFuncionarioLogar.FieldByName('administrador').AsBoolean;
-  //
-  frmHome.Show;
-  end
-  else
-  begin
-    showmessage('Usuário ou senha inválidos.');
-    editSenha.Text := '';
-  end;
+//  if ADOFuncionarioVerificar.FieldByName('acessoLiberado').AsBoolean then
+//  begin
+//  frmHome := TfrmHome.Create(Self);
+//  frmHome.ativoAdministrador := ADOFuncionarioVerificar.FieldByName('administrador').AsBoolean;
+//  //
+//  frmHome.Show;
+//  end
+//  else
+//  begin
+//    showmessage('Usuário ou senha inválidos.');
+//    editSenha.Text := '';
+//  end;
 end;
 
 procedure TfrmLogin.editSenhaKeyDown(Sender: TObject; var Key: Word;
@@ -70,15 +81,20 @@ end;
 
 procedure TfrmLogin.SpeedButton1Click(Sender: TObject);
 begin
-  ADOFuncionarioLogar.Close;
-  ADOFuncionarioLogar.Parameters.ParamByName('@nomeUsuario').Value  := editUsuario.Text;
-  ADOFuncionarioLogar.Parameters.ParamByName('@nomeSenha').Value    := editSenha.Text;
-  ADOFuncionarioLogar.Open;
+  ADOQuery1.Close;
+  ADOQuery1.Parameters.ParamByName('nomeUsuario').Value  := editUsuario.Text;
+  ADOQuery1.Parameters.ParamByName('nomeSenha').Value  := editUsuario.Text;
+  showmessage(ADOQuery1.Parameters.ParamByName('nomeUsuario').Value);
+  ADOQuery1.Open;
+
+
+  showmessage(ADOQuery1.FieldByName('ativoFuncionario').Value);
+
   //
-  if ADOFuncionarioLogar.FieldByName('acessoLiberado').AsBoolean then
+  if ADOQuery1.FieldByName('ativoFuncionario').Value = True then
   begin
     frmHome := TfrmHome.Create(Self);
-    frmHome.ativoAdministrador := ADOFuncionarioLogar.FieldByName('administrador').AsBoolean;
+    frmHome.ativoAdministrador := ADOQuery1.FieldByName('ativoAdm').Value;
     //
     frmHome.Show;
   end

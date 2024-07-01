@@ -34,6 +34,15 @@ type
     SBFinalizarPedido: TSpeedButton;
     Label1: TLabel;
     Image1: TImage;
+    ADOGrupoPedidoRealizadoidMesa: TIntegerField;
+    ADOGrupoPedidoRealizadoativoPedidoRealizado: TBooleanField;
+    ADOGrupoPedidoRealizadonomeMesa: TStringField;
+    ADOGrupoPedidoRealizadoativoBaixa: TStringField;
+    SBPagar: TSpeedButton;
+    ADOFinanceiroMovimentoRealizarBaixa: TADOStoredProc;
+    srcFinanceiroMovimentoRealizarBaixa: TDataSource;
+    ADOGrupoPedidoativoBaixa: TStringField;
+    ADOGrupoPedidonomeMesa: TStringField;
     procedure Timer1Timer(Sender: TObject);
     procedure srcGrupoPedidoDataChange(Sender: TObject; Field: TField);
     procedure SBNovoPedidoClick(Sender: TObject);
@@ -41,6 +50,7 @@ type
     procedure SBCancelarPedidoClick(Sender: TObject);
     procedure SBAtualizarClick(Sender: TObject);
     procedure SBFinalizarPedidoClick(Sender: TObject);
+    procedure SBPagarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -114,6 +124,13 @@ begin
   //
   frmHomePedido.novoPedido := true;
   frmHomePedido.Show;
+end;
+
+procedure TfrmHomeGrupoPedido.SBPagarClick(Sender: TObject);
+begin
+    ADOFinanceiroMovimentoRealizarBaixa.Close;
+    ADOFinanceiroMovimentoRealizarBaixa.Parameters.ParamByName('@idGrupoPedido').Value := ADOGrupoPedido.FieldByName('idGrupoPedido').Value;
+    ADOFinanceiroMovimentoRealizarBaixa.ExecProc;
 end;
 
 procedure TfrmHomeGrupoPedido.srcGrupoPedidoDataChange(Sender: TObject;
