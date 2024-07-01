@@ -1,1 +1,1 @@
-![Uploading Sistema - Restaurante (1).gif…]()
+<img src="./Sistema-Restaurante.gif" alt="Animação da tela">
